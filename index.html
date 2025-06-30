@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>اعرف إمامك</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&family=Tajawal:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      background: linear-gradient(135deg, #001f3f, #003366) fixed;
+      font-family: 'Tajawal', sans-serif;
+      color: #fff;
+      direction: rtl;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #particles-js {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      inset-inline: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      z-index: 10;
+    }
+    .icon-btn {
+      text-align: center;
+    }
+    .icon-btn img, .icon-btn svg {
+      display: block;
+      width: 34px;
+      height: 34px;
+    }
+    .icon-btn span {
+      font-size: 12px;
+      margin-top: 4px;
+      display: block;
+    }
+    main, #start-screen, #quiz-screen, #result-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    main.active, #start-screen.active, #quiz-screen.active, #result-screen.active {
+      display: flex;
+    }
+    #start-screen h1 {
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+    button {
+      background: gold;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 50px;
+      font-size: 24px;
+      font-family: 'Rubik', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    button:hover {
+      background: #cca300;
+      transform: translateY(-3px);
+    }
+    .question-box {
+      background: rgba(0,34,68,0.9);
+      border-radius: 14px;
+      width: 90%;
+      max-width: 400px;
+      padding: 24px;
+      position: relative;
+      text-align: center;
+    }
+    .timer {
+      position: absolute;
+      top: 14px;
+      inline-start: 14px;
+      background: gold;
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #ffde00;
+      margin: 10px 0 20px;
+      border-radius: 8px;
+      transition: width 1s linear;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .answer-btn {
+      background: #003366;
+      border: 2px solid #0077cc;
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-family: 'Rubik', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+    .answer-btn:hover:not(:disabled) {
+      background: #0059b3;
+      transform: translateY(-3px);
+    }
+    .answer-btn.correct { background: #28a745 !important; border-color: #28a745 !important; }
+    .answer-btn.wrong   { background: #dc3545 !important; border-color: #dc3545 !important; }
+    .answer-btn:disabled { cursor: default; opacity: 0.85; }
+    #result-screen h2 {
+      font-size: 28px;
+    }
+    #result-screen p {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <header>
+    <div class="icon-btn">
+      <a href="https://www.instagram.com/alfatimie1?igsh=MXd0ODRsMGNqbWpjaA==">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+      </a>
+    </div>
+    <div class="icon-btn">
+      <svg viewBox="0 0 576 512"><path fill="gold"d="M528.1 171.5L382 150.2 316.7 17c-5.4-11-17-17.9-29.7-17.9s-24.3 6.9-29.7 17.9L194 150.2 47.9 171.5c-12.1 1.8-22.1 10.6-25.8 22.4s.2 24.2 8.7 32.6l105.7 103-25 145.5c-2.1 12.1 2.9 24.3 13.1 31.5s24 8.8 35 .7L288 439.6l130.3 68.6c11 5.8 24.3 4.9 34.5-2.2s15.2-18 13.1-30.1l-25-145.5 105.7-103c8.5-8.3 12.9-20.3 10.7-32.6s-13.7-20.6-25.8-22.4z"/></svg>
+      <span>قيمنا</span>
+    </div>
+  </header>
+
+  <div id="start-screen" class="active">
+    <h1>اعرف إمامك</h1>
+    <button id="start-btn">ابدأ</button>
+  </div>
+
+
+  <div id="quiz-screen">
+    <div class="question-box">
+      <div class="timer">10</div>
+      <div class="progress-bar" id="progress-bar"></div>
+      <h2 id="question-text"></h2>
+      <div class="answers" id="answers"></div>
+    </div>
+  </div>
+
+  <div id="result-screen">
+    <h2 id="result-text"></h2>
+    <p id="result-message"></p>
+    <button id="restart-btn">إعادة المحاولة</button>
+  </div>
+
+  <audio id="sound-correct" src="https://cdn.pixabay.com/audio/2024/08/03/audio_169049f4a1.mp3?filename=arcade-ui-6-229503.mp3"></audio>
+  <audio id="sound-wrong" src="https://cdn.pixabay.com/audio/2024/05/03/audio_6130b029fd.mp3?filename=error-08-206492.mp3"></audio>
+  <audio id="sound-joke" src="https://d321.d2mefast.net/tb/b/59/tubidy_mp3_57168.mp3"></audio> <!-- صوت النتيجة الضعيفة -->
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 60 },
+        color: { value: ["#1E90FF", "#FFD700"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.4 },
+        size: { value: 2 },
+        move: { enable: true, speed: 1.2 },
+        line_linked: { enable: false }
+      }
+    });
+
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.getElementById('answers');
+    const timerEl = document.querySelector('.timer');
+    const progressBar = document.getElementById('progress-bar');
+    const resultText = document.getElementById('result-text');
+    const resultMessage = document.getElementById('result-message');
+    const soundCorrect = document.getElementById('sound-correct');
+    const soundWrong = document.getElementById('sound-wrong');
+    const soundJoke = document.getElementById('sound-joke');
+
+    let questions = [
+      
+      {
+        question: "من هم قتلة الحسين (عليه السلام)؟",
+        answers: ["أبي بكر وعمر وأتباعهما", "بنو أمية وبنو مروان وأتباعهما", "المنتحلة لولايته والنواصب", "جميع ما سبق"],
+        correct: 3
+      },
+      {
+        question: "هل البسملة جزء من القرآن؟",
+        answers: ["نعم إنها آية في كل السور", "كلّا ليست آية", "في سورة الفاتحة فقط", "نعم إنها آية في السور عدا التوبة"],
+        correct: 0
+      },
+      {
+        question: "على أي قراءة تقرأ القرآن؟",
+        answers: ["قراءة حفص عن عاصم", "قراءة ورش عن نافع", "قراءة التنزيل عن آل محمد", "القراءات السبع"],
+        correct: 2
+      },
+      {
+        question: "كم عدد أجزاء القرآن؟",
+        answers: ["٣٠ جزء", "الأجزاء الحالية بدعة", "جزئين", "جزء واحد"],
+        correct: 1
+      },
+      {
+        question: "اكمل الحديث: اللهم اجز... لقد ظلم الحجر والمدر",
+        answers: ["الشيطان", "عمر", "معاوية", "هابيل"],
+        correct: 1
+      },
+      {
+        question: "شخصية اليماني من أي دولة؟",
+        answers: ["من العراق", "من بلاد الحجاز", "من بلاد الشام", "من اليمن"],
+        correct: 3
+      },
+      {
+        question: "ما هي منزلة جابر الجعفي عند الصادِقَين؟",
+        answers: ["جابر الجعفي ضعيف كذاب", "لا منزلة له", "منزلة سلمان من رسول الله", "منزلة عادية"],
+        correct: 2
+      },
+      {
+        question: "أول من يكرّ في الرجعة من الأئمة هو:",
+        answers: ["رسول الله (صلى الله عليه وآله)", "أمير المؤمنين (عليه السلام)", "الحسن (عليه السلام)", "الحسين (عليه السلام)"],
+        correct: 3
+      },
+      {
+    question: "على من يُطلق لقب آيات الله العظمى؟",
+    answers: [
+      "على المراجع",
+      "على الأئمة خاصةً",
+      "على سائر الناس",
+      "على طلبة الحوزة"
+    ],
+    correct: 1
+  },
+  {
+    question: "أين دُفنت العقيلة زينب (عليها السلام)؟",
+    answers: [
+      "في الشام",
+      "في الكوفة",
+      "في مصر",
+      "في المدينة"
+    ],
+    correct: 2
+  },
+  {
+    question: "من هم أئمة الأئمة؟",
+    answers: [
+      "علي، الحسن، الحسين",
+      "محمدٌ، عليٌّ، فاطمة",
+      "الحسن، الحسين، علي السجاد",
+      "الباقر، الصادق، الكاظم"
+    ],
+    correct: 1
+  },
+  {
+    question: "كم عدد الأئمة (عليهم السلام)؟",
+    answers: [
+      "٥",
+      "١٢",
+      "١٣",
+      "١٤"
+    ],
+    correct: 3
+  },
+  {
+    question: "إن الله نحل علياً (عليه السلام) أربع أشياء خاصة به عز وجل فما هنّ؟",
+    answers: [
+      "الشجاعة، الموعظة، العيشة الكريمة، المروّة",
+      "الغلاظة، التدين، الإخلاص، المودة",
+      "علمه، وفهمه، وحكمه، واسمه",
+      "القتال، النزعة، الحب، الصرعة"
+    ],
+    correct: 2
+  },
+  {
+    question: "ما هو الكوثر؟",
+    answers: [
+      "فاطمة (صلوات الله عليها)",
+      "نهرٌ في الجنة",
+      "جميع ما سبق"
+    ],
+    correct: 2
+  },
+  {
+    question: "ما حكم الشهادة الثالثة في التشهد؟",
+    answers: [
+      "مبطلة للصلاة",
+      "جائزة",
+      "واجبة ومن دونها تبطل الصلاة"
+    ],
+    correct: 2
+  },
+  {
+    question: "ما معنى قوله تعالى «وَبِئْرٍ مُعَطَّلَةٍ»؟",
+    answers: [
+      "الإمام الناطق",
+      "البئر المالحة",
+      "الإمام الصامت",
+      "بئر فيها تراب"
+    ],
+    correct: 2
+  },
+  {
+    question: "ما معنى قوله تعالى «وَأَشْرَقَتِ الْأَرْضُ بِنُورِ رَبِّهَا»؟",
+    answers: [
+      "بنور الله عز وجل",
+      "بنور الإمام",
+      "بنور الملائكة",
+      "بنور الشمس"
+    ],
+    correct: 1
+  },
+  {
+    question: "«وَآتَيْنَاهُم مُّلْكًا عَظِيمًا» ما هو الملك العظيم؟",
+    answers: [
+      "الإمامة وفرض الطاعة",
+      "الملكان السماويان",
+      "ملوك بنو أمية وبنو العباس",
+      "الصبر"
+    ],
+    correct: 0
+  },
+  {
+    question: "«وَاتَّبَعُوا النُّورَ الَّذِي أُنزِلَ مَعَهُ» ما هو النور؟",
+    answers: [
+      "أمير المؤمنين والأئمة (عليهم السلام)",
+      "جبريل والملائكة",
+      "الصحابة",
+      "النساء"
+    ],
+    correct: 0
+  },
+  {
+    question: "«وَكُونُوا مَعَ الصَّادِقِينَ» من هم الصادقون؟",
+    answers: [
+      "الأنبياء",
+      "الأئمة (عليهم السلام)",
+      "الملائكة",
+      "الصحابة"
+    ],
+    correct: 1
+  },
+  {
+    question: "من هو قاتل عمر (لعنه الله)؟",
+    answers: [
+      "أبو بكر",
+      "طلحة",
+      "الزبير",
+      "أبو لؤلؤة النهاوندي (عليه السلام)"
+    ],
+    correct: 3
+  },
+  {
+    question: "متى يصادف عيد فرحة الزهراء (عليها السلام)؟",
+    answers: [
+      "في ٧ ربيع الأول",
+      "في ٩ ربيع الأول",
+      "في ٨ ربيع الآخر",
+      "في ٦ ذي الحجة"
+    ],
+    correct: 1
+  },
+  {
+    question: "متى وُلد الإمام الكاظم (عليه السلام)؟",
+    answers: [
+      "في شهر ذي الحجة",
+      "في شهر صفر",
+      "في شهر ربيع الأول",
+      "في شهر جمادى"
+    ],
+    correct: 0
+  },
+  {
+    question: "هل كان علي الأكبر متزوجاً؟",
+    answers: [
+      "نعم، وله أولاد",
+      "كلّا، لم يتزوج",
+      "تزوج ولكنه لم ينجب أولاد"
+    ],
+    correct: 0
+  },
+  {
+    question: "عدد أصول الدين؟",
+    answers: [
+      "التوحيد، العدل، النبوة، الإمامة",
+      "التوحيد، العدل، النبوة",
+      "أصل الدين عليٌ (عليه السلام)",
+      "التوحيد فقط"
+    ],
+    correct: 2
+  },
+  {
+    question: "ما حكم من لا يؤمن بالرجعة؟",
+    answers: [
+      "مؤمن",
+      "مأثوم",
+      "لا شيء عليه",
+      "كافر"
+    ],
+    correct: 3
+  },
+  {
+    question: "ما حكم من لا يقول بالمتعة؟",
+    answers: [
+      "مؤمن",
+      "مأثوم",
+      "لا شيء عليه",
+      "كافر"
+    ],
+    correct: 3
+  },
+  {
+    question: "عن أي إمام ورد دعاء العهد؟",
+    answers: [
+      "أمير المؤمنين (عليه السلام)",
+      "الإمام الصادق (عليه السلام)",
+      "صاحب الزمان (عليه السلام)",
+      "الإمام الكاظم (عليه السلام)"
+    ],
+    correct: 1
+  },
+  {
+    question: "عن أي إمام وردت زيارة آل ياسين؟",
+    answers: [
+      "الإمام الرضا (عليه السلام)",
+      "الإمام الهادي (عليه السلام)",
+      "الإمام العسكري (عليه السلام)",
+      "صاحب الزمان (عليه السلام)"
+    ],
+    correct: 3
+  },
+  {
+    question: "من هم أهل البيت (عليهم السلام)؟",
+    answers: [
+      "أصحاب الكساء (عليهم السلام)",
+      "الأئمة (عليهم السلام)",
+      "أزواج النبي (صلى الله عليه وآله)",
+      "الصحابة"
+    ],
+    correct: 0
+  },
+  {
+    question: "اللّهُمَّ إِنِّي أَدِينُ لَكَ بـ ... بَيْنَ يَدَيْ صاحِبِ هذِهِ البُقْعَةِ",
+    answers: [
+      "بالمتعة",
+      "بالفسحة",
+      "بالرجعة",
+      "بالوجعة"
+    ],
+    correct: 2
+  },
+  {
+    question: "من هو طاووس الجنان؟",
+    answers: [
+      "الحسين (عليه السلام)",
+      "الباقر (عليه السلام)",
+      "أمير المؤمنين (عليه السلام)",
+      "صاحب الأمر (عليه السلام)"
+    ],
+    correct: 3
+  },
+  {
+    question: "من الذين لهم صلاحية أن تُقبّل يدهم؟",
+    answers: [
+      "المراجع",
+      "العلماء المجتهدون",
+      "الأئمة (عليهم السلام)",
+      "جميع ما سبق"
+    ],
+    correct: 2
+  },
+  {
+    question: "من هو الإمام الذي قال عنه القريشيون: هذا إله أهل العراق؟",
+    answers: [
+      "السجاد (عليه السلام)",
+      "الباقر (عليه السلام)",
+      "الصادق (عليه السلام)",
+      "الهادي (عليه السلام)"
+    ],
+    correct: 1
+  },
+  {
+    question: "«وَإِذِ ابْتَلَى إِبْرَاهِيمَ رَبُّهُ بِكَلِمَاتٍ فَأَتَمَّهُنَّ» ما هذه الكلمات؟",
+    answers: [
+      "في محمّدٍ وعليٍّ وفاطمة والحسن والحسين",
+      "كلمات غيبية",
+      "لا يعلمها إلا الله",
+      "الأسماء الحسنى"
+    ],
+    correct: 0
+  },
+  {
+    question: "من هو أول من أُلجم بلجام وهو مصلوب؟",
+    answers: [
+      "عمار بن ياسر",
+      "جعفر بن أبي طالب",
+      "ميثم التمّار",
+      "العباس بن علي (عليه السلام)"
+    ],
+    correct: 2
+  },
+  {
+    question: "«وَذَلِكَ دِينُ الْقَيِّمَةِ» من هي القيّمة؟",
+    answers: [
+      "فاطمة (صلوات الله عليها)",
+      "خديجة (عليها السلام)",
+      "مريم (عليها السلام)",
+      "أم موسى (عليها السلام)"
+    ],
+    correct: 0
+  }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    let current = 0, score = 0, timer, timeLeft = 10;
+
+    startBtn.onclick = () => {
+      shuffle(questions);
+      questions = questions.slice(0, 10); // عرض 10 أسئلة فقط
+      score = 0;
+      current = 0;
+      startScreen.classList.remove('active');
+      quizScreen.classList.add('active');
+      nextQuestion();
+    };
+
+    restartBtn.onclick = () => {
+      resultScreen.classList.remove('active');
+      startScreen.classList.add('active');
+    };
+
+    function nextQuestion() {
+      clearInterval(timer);
+      if (current >= questions.length) return showResult();
+      const q = questions[current];
+      questionText.textContent = q.question;
+      answersContainer.innerHTML = '';
+      q.answers.forEach((ans, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = ans;
+        btn.onclick = () => checkAnswer(i, q.correct, btn);
+        answersContainer.appendChild(btn);
+      });
+      timeLeft = 10;
+      timerEl.textContent = timeLeft;
+      progressBar.style.width = '100%';
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        progressBar.style.width = (timeLeft / 10) * 100 + '%';
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          soundWrong.currentTime = 0;
+          soundWrong.play();
+          disableAnswers(q.correct);
+          setTimeout(() => { current++; nextQuestion(); }, 2000);
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(selected, correct, btn) {
+      clearInterval(timer);
+      document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+      if (selected === correct) {
+        btn.classList.add('correct');
+        score++;
+        soundCorrect.play();
+      } else {
+        btn.classList.add('wrong');
+        soundWrong.play();
+        disableAnswers(correct);
+      }
+      setTimeout(() => { current++; nextQuestion(); }, 1500);
+    }
+
+    function disableAnswers(correct) {
+      const btns = document.querySelectorAll('.answer-btn');
+      btns[correct].classList.add('correct');
+      btns.forEach(b => b.disabled = true);
+    }
+
+    function showResult() {
+      quizScreen.classList.remove('active');
+      resultScreen.classList.add('active');
+      resultText.textContent = `نتيجتك: ${score} من ${questions.length}`;
+      const percent = (score / questions.length) * 100;
+
+      if (percent >= 80) {
+        resultMessage.textContent = 'وفقك الامام على هذه العقيدة';
+      } else if (percent >= 50) {
+        resultMessage.textContent = 'جيد، استمر بالتعلم!';
+      } else {
+        resultMessage.textContent = 'هل انت بتري أم أصولي!';
+        soundJoke.currentTime = 0;
+        document.getElementById("sound-joke").play(); // صوت النتيجة الضعيفة مفعل دائمًا
+      }
+    }
+  </script>
+</body>
+</html>
