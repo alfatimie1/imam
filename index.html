@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -51,7 +52,7 @@
       display: block;
       width: 34px;
       height: 34px;
-	  transform: translateY(20px); /* ينزل الأيقونة 4 بيكسل */
+      transform: translateY(20px);
     }
     .icon-btn span {
       font-size: 12px;
@@ -71,6 +72,10 @@
     }
     main.active, #start-screen.active, #quiz-screen.active, #result-screen.active {
       display: flex;
+    }
+    #start-screen img.start-logo {
+      max-width: 200px;
+      margin-bottom: 20px;
     }
     #start-screen h1 {
       font-size: 36px;
@@ -162,10 +167,11 @@
   </header>
 
   <div id="start-screen" class="active">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIMd2aLT-i3BoDQ0a9ATV9zk0ICuhxCQZct8ZVaiTt04oAv7f7jviO0cIoXwLIcFUmcjOGVjAiTUMlco0cyyw-wL6p0b44imvnF5Yz5VXeKf1yN6yCJ9yR3wKE5JkeFl5K4SvuXQf4Bg2uXErzyKoM0pxH64cimsbDCzkZkrOPHsxt4iy15rcLk0I_qdn5/s2560/1000067137.png"
+      alt="شعار اعرف إمامك" class="start-logo">
     <h1>اعرف إمامك</h1>
     <button id="start-btn">ابدأ</button>
   </div>
-
 
   <div id="quiz-screen">
     <div class="question-box">
