@@ -42,14 +42,20 @@
     .icon-btn {
       text-align: center;
     }
-    .icon-btn img, .icon-btn svg {
+    .icon-btn img {
       display: block;
       width: 34px;
       height: 34px;
     }
+    .icon-btn svg {
+      display: block;
+      width: 34px;
+      height: 34px;
+	  transform: translateY(20px); /* ينزل الأيقونة 4 بيكسل */
+    }
     .icon-btn span {
       font-size: 12px;
-      margin-top: 4px;
+      margin-top: 20px;
       display: block;
     }
     main, #start-screen, #quiz-screen, #result-screen {
@@ -100,7 +106,7 @@
       inline-start: 14px;
       background: gold;
       color: #000;
-      padding: 6px 14px;
+      padding: 9px 17px;
       border-radius: 20px;
       font-weight: 700;
     }
